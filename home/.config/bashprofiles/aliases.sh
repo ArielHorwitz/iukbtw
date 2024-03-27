@@ -45,9 +45,9 @@ alias baconm="bacon clippy -- --"\
 " --warn clippy::unwrap_used"\
 " --warn clippy::unwrap_in_result"\
 " --warn clippy::str_to_string"\
-" --warn clippy::verbose_file_reads"\
-""
+" --warn clippy::verbose_file_reads"
 #" --warn clippy::indexing_slicing"\
+alias crr="cargo release --no-publish"
 
 # SSH
 alias "ssh-keygen"="ssh-keygen -t ed25519"

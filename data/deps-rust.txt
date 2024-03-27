@@ -3,4 +3,4 @@ bat
 ripgrep
 fd-find
 du-dust
-cargo-bump
+cargo-release
