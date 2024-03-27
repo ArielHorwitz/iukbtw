@@ -8,34 +8,34 @@ BINARY_URL="https://github.com/kmonad/kmonad/releases/download/0.4.2/kmonad"
 
 # Root
 [[ $EUID -eq 0 ]] && exit_error "Do not run `basename $0` as root."
-sudo tcprint "ok]Root privileges aquired."
+sudo printcolor -s ok "Root privileges aquired."
 
 setup_installation() {
     # Temporary dir
-    tcprint "debug]Temporary working directory: $TMPDIR"
+    printcolor -s debug "Temporary working directory: $TMPDIR"
     rm -rf $TMPDIR
     mkdir -p $TMPDIR
     cd $TMPDIR
 }
 
 cleanup_installation() {
-    tcprint "ok]Cleaning up..."
+    printcolor -s ok "Cleaning up..."
     rm -rf $TMPDIR
 }
 
 install_binary() {
     # Download KMonad v0.4.2
     download_file=$TMPDIR/kmonad
-    tcprint "ok]Downloading..."
+    printcolor -s ok "Downloading..."
     echo "  $BINARY_URL"
     wget -q --output-document $download_file $BINARY_URL
-    tcprint "ok]Installing..."
+    printcolor -s ok "Installing..."
     chmod +x $download_file
     sudo mv $download_file /bin/kmonad
 }
 
 configure() {
-    tcprint "ok]Configuring udev rules and uinput module..."
+    printcolor -s ok "Configuring udev rules and uinput module..."
     # Add udev rules for KMonad
     # (https://github.com/kmonad/kmonad/blob/master/doc/faq.md#q-how-do-i-get-uinput-permissions)
     # (https://github.com/kmonad/kmonad/issues/160#issuecomment-766121884)

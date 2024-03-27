@@ -19,6 +19,6 @@ eval "$CLI" || exit 1
 mkdir $target
 
 # Flatten
-[[ -n $verbose ]] && tcprint "debug]Flattening: '$nested' => '$target'" || true
+[[ -n $verbose ]] && printcolor -s debug "Flattening: '$nested' => '$target'" || true
 find $nested -type f -exec cp $verbose --backup=numbered -t $target '{}' +
-[[ -n $verbose ]] && tcprint "ok]Flattened." || true
+[[ -n $verbose ]] && printcolor -s ok "Flattened." || true

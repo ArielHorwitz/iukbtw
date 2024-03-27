@@ -74,7 +74,7 @@ mountpoint=${MOUNTPOINT_DIR}/${label}
 
 if [[ -n "$args_unmount" ]]; then
 
-    tcprint "purple]Syncing and unmounting $path <- $mountpoint" >&2
+    printcolor -s notice "Syncing and unmounting $path <- $mountpoint" >&2
     [[ -n $args_force ]] || promptconfirm "Proceed?" || exit_error "User aborted"
 
     sync || exit_error "Failed to sync"
@@ -83,8 +83,8 @@ if [[ -n "$args_unmount" ]]; then
 
 elif [[ -n "$args_mount" ]]; then
 
-    tcprint "purple]Mounting: $path -> $mountpoint" >&2
-    [[ ! -e $mountpoint ]] || tcprint "yellow]Mount point exists" >&2
+    printcolor -s notice "Mounting: $path -> $mountpoint" >&2
+    [[ ! -e $mountpoint ]] || printcolor -s warn "Mount point exists" >&2
     [[ -n $args_force ]] || promptconfirm "Proceed?" || exit_error "User aborted"
 
     [[ -d $mountpoint ]] || sudo mkdir --parents $mountpoint

@@ -1,6 +1,7 @@
 spongecrab   0.2.2 https://github.com/ArielHorwitz/spongecrab/releases/download/v0.2.2/spongecrab
 rhinopuffin  0.2.0 https://github.com/ArielHorwitz/rhinopuffin/releases/download/v0.2.0/rhinopuffin
 geckopanda   0.1.0 https://github.com/ArielHorwitz/geckopandacli/releases/download/v0.1.0/geckopanda
-termcolors   0.1.0 https://github.com/ArielHorwitz/termcolors/releases/download/v0.1.0/termcolors
 psprompt     0.1.1 https://github.com/ArielHorwitz/psprompt/releases/download/v0.1.1/psprompt
 matchpick    0.1.0 https://github.com/ArielHorwitz/matchpick/releases/download/v0.1.0/matchpick
+colortable   0.2.0 https://github.com/ArielHorwitz/termcolors/releases/download/v0.2.0/colortable
+printcolor   0.2.0 https://github.com/ArielHorwitz/termcolors/releases/download/v0.2.0/printcolor

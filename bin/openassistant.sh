@@ -107,12 +107,12 @@ get_query() {
 
 read_query_to_file() {
     if [[ -n $args_read_stdin ]]; then
-        [[ -n $QUIET ]] || tcprint "notice]Reading query from stdin..." >&2
+        [[ -n $QUIET ]] || printcolor -s notice "Reading query from stdin..." >&2
         read query_content
         echo "$query_content" > $QUERY_FILE
     else
         [[ -n $EDITOR ]] || exit_error "No editor configured (use EDITOR environment variable)"
-        [[ -z $VERBOSE ]] || tcprint "notice]Reading query from editor: \"$EDITOR\"" >&2
+        [[ -z $VERBOSE ]] || printcolor -s notice "Reading query from editor: \"$EDITOR\"" >&2
         [[ -f $QUERY_FILE && -n $(< $QUERY_FILE) ]] || echo $EDITOR_QUERY_BLURB > $QUERY_FILE
         `$EDITOR $QUERY_FILE` &>/dev/null
     fi
@@ -161,7 +161,7 @@ call_api() {
         -H "Authorization: Bearer $openai_api_key"
         -d "$api_call_data"
     )
-    tcprint "yellow n]Fetching response..."
+    printcolor -ns ok "Fetching response..."
     curl "${curl_args[@]}" || :
     printf         '\r                    \r'
 }
@@ -172,17 +172,17 @@ read_response() {
         echo "$raw_response" > $RESPONSE_CONTENT_FILE
         return 0
     fi
-    tcprint "yellow bu]Error:" >&2
+    printcolor -f yellow -o b,u "Error:" >&2
     jq --color-output < "$RESPONSE_DATA_FILE" >&2
     exit_error "$(jq -r '.error.message' $RESPONSE_DATA_FILE)"
 }
 
 print_response() {
     if [[ -n $VERBOSE ]]; then
-        tcprint "green bu]Response headers:"
+        printcolor -f green -o b,u "Response headers:"
         bat -pp "$RESPONSE_HEADERS_FILE"
     fi
-    [[ -n $QUIET ]] || tcprint "green bu]OpenAssistant says:"
+    [[ -n $QUIET ]] || printcolor -f green -o b,u "OpenAssistant says:"
     bat -pp --language markdown $RESPONSE_CONTENT_FILE
     if [[ -z $QUIET ]]; then
         local cost=$(get_stat_current cost)
@@ -191,8 +191,8 @@ print_response() {
         local tokens_response=$(get_stat_current tokens_response)
         local cost_prompt=$(get_stat_current cost_prompt)
         local cost_response=$(get_stat_current cost_response)
-        tcprint "cyan bn]$tokens tokens ~\$$cost"
-        tcprint "cyan bd] [prompt: $tokens_prompt ~\$$cost_prompt] [response: $tokens_response ~\$$cost_response]"
+        printcolor -f cyan -n -ob "$tokens tokens ~\$$cost"
+        printcolor -f cyan -ob -od " [prompt: $tokens_prompt ~\$$cost_prompt] [response: $tokens_response ~\$$cost_response]"
     fi
 }
 
@@ -288,23 +288,21 @@ clear_config() {
 }
 
 print_debug_prequery() {
-    tcprint "green bu]Environment:"
-    tcprint "green dn] Config dir: "; echo $CONFIG_DIR
-    tcprint "green dn]  Local dir: "; echo $LOCAL_DIR
-    tcprint "green dn]    API key: "; echo "${openai_api_key:0:8}..."
-    tcprint "green bu]System instructions:"
-    tcset "yellow d"
-    printf "%s\n" "$system_instructions"
-    tcreset
+    printcolor -f green -ob -ou "Environment:"
+    printcolor -f green -n -od " Config dir: "; echo $CONFIG_DIR
+    printcolor -f green -n -od "  Local dir: "; echo $LOCAL_DIR
+    printcolor -f green -n -od "    API key: "; echo "${openai_api_key:0:8}..."
+    printcolor -f green -ob -ou "System instructions:"
+    printcolor -f yellow -od "$system_instructions"
 }
 
 print_debug_precall() {
-    tcprint "green bu]Request data:"
+    printcolor -f green -ob -ou "Request data:"
     jq --color-output <<< $api_call_data
 }
 
 print_query() {
-    tcprint "green bu]Query:"
+    printcolor -f green -ob -ou "Query:"
     printf "%s\n" "$query_content" | bat -pp --language markdown
 }
 
@@ -322,19 +320,19 @@ list_history() {
     local end=$((args_list_limit + start))
     local max=${#dirs[@]}
     for ((index=start; index<=end && index<=max; index++)); do
-        tcprint "purple dn]`printf %-3s $index` "
+        printcolor -f magenta -n -od "`printf %-3s $index` "
         local dir=`echo "$HISTORY_DIR/${dirs[index]}" | xargs`
         local fulldate=`basename $dir`
-        tcprint "blue dn]`printf '%-9s' ${fulldate:0:8}`"
+        printcolor -f blue -n -od "`printf '%-9s' ${fulldate:0:8}`"
         local dtime=`cut -d- -f4- <<< $fulldate | sed 's/-/:/g'`
-        tcprint "blue dn]`printf '%-9s' ${dtime:0:8}` "
+        printcolor -f blue -n -od "`printf '%-9s' ${dtime:0:8}` "
         local ptokens=$(printf '%3s' $(wc -w "$dir/query" 2>&- | awk '{print $1}' || printf "??"))
         local rtokens=$(printf '%3s' $(wc -w "$dir/response_content" 2>&- | awk '{print $1}' || printf "??"))
-        tcprint "red dn]$ptokens "
-        tcprint "green dn]$rtokens "
+        printcolor -f red -n -od "$ptokens "
+        printcolor -f green -n -od "$rtokens "
         local query_line=$(tr '\n' ' ' < "$dir/query" || echo "??")
         [[ ${#query_line} -le $query_cols ]] || local query_line="${query_line:0:query_cap}.."
-        tcprint "cyan dn]$query_line"
+        printcolor -f cyan -n -od "$query_line"
         echo
     done
 }
@@ -352,13 +350,13 @@ get_conversation() {
 
 load_from_history() {
     local dir=`get_conversation $args_load || exit_error "Unknown conversation index: $args_load"`
-    [[ -n $QUIET ]] || tcprint "notice]Loading conversation from: $dir"
+    [[ -n $QUIET ]] || printcolor -s notice "Loading conversation from: $dir"
     cp -t $CONVO_DIR "$dir"/*
 }
 
 delete_from_history() {
     local dir=$(get_conversation $args_delete || return 1) || exit_error "Unknown conversation index: $args_delete"
-    [[ -n $QUIET ]] || tcprint "notice]Deleting conversation from: $dir"
+    [[ -n $QUIET ]] || printcolor -s notice "Deleting conversation from: $dir"
     rm -r $dir
 }
 

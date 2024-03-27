@@ -23,15 +23,15 @@ HOSTNAME=$args_hostname
 
 check_suspicious() {
     if [[ -z $(ls -a "$args_source" | grep -E "(.config|.local)") ]]; then
-        tcprint "warn n]Suspicious directory:"
+        printcolor -ns warn "Suspicious directory:"
         echo " $SOURCE_DIR"
         lsl "$SOURCE_DIR"
-        promptconfirm -d "warn]This folder does not look like a home directory. Continue?" || exit_error "User cancelled the operation."
+        promptconfirm -d "This folder does not look like a home directory. Continue?" -- -s warn || exit_error "User cancelled the operation."
     fi
 }
 
 cleanup_staging() {
-    tcprint "ok n]Cleaning up:"
+    printcolor -ns ok "Cleaning up:"
     echo " $STAGING_DIR"
     rm -rf $STAGING_DIR
 }
@@ -39,17 +39,17 @@ cleanup_staging() {
 prepare_staging() {
     rm -rf $STAGING_DIR
     mkdir --parents $STAGING_DIR
-    tcprint "ok n]Temporary directory:"
+    printcolor -ns ok "Temporary directory:"
     echo " $STAGING_DIR"
-    tcprint "ok n]Source directory:"
+    printcolor -ns ok "Source directory:"
     echo " $SOURCE_DIR"
     cd $SOURCE_DIR
-    tcprint "ok]Preparing staging..."
+    printcolor -s ok "Preparing staging..."
     cp -rf --parents . $STAGING_DIR
     local mp_pattern=$(matchpick --print-start)
     local mp_files=$(grep --files-with-match --recursive $mp_pattern $STAGING_DIR)
     for file in $mp_files; do
-        tcprint "debug n]Matchpicking:"
+        printcolor -ns debug "Matchpicking:"
         echo " `realpath --relative-to=$STAGING_DIR $file`"
         matchpick $file -o $file -m $HOSTNAME
         matchpicked_files+=("$file")
@@ -64,7 +64,7 @@ review_staging() {
 
 apply_staging() {
     cd $STAGING_DIR
-    tcprint "ok n]Applying..."
+    printcolor -ns ok "Applying..."
     echo " $HOME"
     cp -rf --parents . $HOME
 }

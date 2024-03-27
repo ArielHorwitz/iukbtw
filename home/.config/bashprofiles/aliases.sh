@@ -91,5 +91,5 @@ cdl() {
 
 starttest() {
     mkcd /tmp/terminaltest-$RANDOM
-    tcprint "debug]New test directory."
+    printcolor -s debug "New test directory."
 }

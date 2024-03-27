@@ -16,7 +16,6 @@ CLI=(
     -f "binaries;Install binaries;;b"
     -f "dependencies;Install dependencies (implies -b);;d"
     -f "web-dependencies;Install web dependencies (implies -b);;w"
-    -f "skip-unknown-dependencies;Skip updating dependencies that don't report their version;;W"
     -f "system;Update system packages;;s"
 )
 CLI=$($DATADIR/spongecrab --name "$APP_NAME" --about "$ABOUT" "${CLI[@]}" -- "$@") || exit 1
@@ -73,7 +72,6 @@ update_dependencies() {
 update_dependencies_web() {
     progress "Installing web dependencies"
     local dependencies_file=$DATADIR/deps-web.txt
-    local skip_unknown=$args_skip_unknown_dependencies
     while read dep; do
         [[ -n $dep ]] || continue
         local name=$(echo $dep | cut -d' ' -f1)
@@ -84,10 +82,6 @@ update_dependencies_web() {
             eval "cached_version=\"$($cached_bin --version 2>/dev/null || echo UNKNOWNVERSION)\""
             if [[ $cached_version = 'UNKNOWNVERSION' ]]; then
                 echo -n "cached: $name unknown"
-                if [[ -n $skip_unknown ]]; then
-                    echo " - skipping [latest: v$required_version]"
-                    continue
-                fi
                 echo " - updating to latest [v$required_version]"
             else
                 echo -n "cached: $cached_version"
@@ -136,7 +130,7 @@ restart_services() {
 }
 
 # Checks
-[[ $EUID -eq 0 ]] && exit_with_error "Do not run $0 as root."
+[[ $EUID -eq 0 ]] && exit_with_error "Do not run $APP_NAME as root."
 [[ ! -d $SRCDIR ]] && exit_with_error "Failed to resolve source directory: $SRCDIR"
 [[ ! -d $DATADIR ]] && exit_with_error "Missing data directory: $DATADIR"
 

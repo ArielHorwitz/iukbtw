@@ -30,7 +30,7 @@ if [[ ! -d $USER_VENV ]]; then
     python -m venv $USER_VENV
     source $USER_VENV/bin/activate
     pip install --upgrade pip virtualenv >/dev/null
-    tcprint "ok]Installed pyv at: $USER_ENV"
+    printcolor -s ok "Installed pyv at: $USER_ENV"
 fi
 
 source $USER_VENV/bin/activate || exit_error "Failed to activate pyv. Try (--install)"
@@ -49,11 +49,11 @@ if [[ -n $args_name ]]; then
     # Update pip
     pip install --upgrade pip
     # Print environment path
-    tcprint "notice]New venv: $VIRTUAL_ENV"
+    printcolor -s notice "New venv: $VIRTUAL_ENV"
     exit
 elif [[ -n $args_virtualenv_args ]]; then
     # Manage pyv environment
-    tcprint "notice]pyv venv: $VIRTUAL_ENV"
+    printcolor -s notice "pyv venv: $VIRTUAL_ENV"
     virtualenv "${args_virtualenv_args[@]}"
 else
     exit_error "No operation selected (try --help)."

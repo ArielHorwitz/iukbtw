@@ -87,7 +87,7 @@ if [[ -n $args_prompt ]]; then
     query_content="$args_prompt"
 else
     [[ -n $EDITOR ]] || exit_error "No editor configured (use EDITOR environment variable)"
-    [[ $VERBOSITY -lt 1 ]] || tcprint "notice]Reading query from editor: \"$EDITOR\"" >&2
+    [[ $VERBOSITY -lt 1 ]] || printcolor -s notice "Reading query from editor: \"$EDITOR\"" >&2
     [[ -f $QUERY_FILE && -n $(< $QUERY_FILE) ]] || echo $EDITOR_QUERY_BLURB > $QUERY_FILE
     `$EDITOR $QUERY_FILE` &>/dev/null
     query_content="$(cat $QUERY_FILE)"
@@ -107,7 +107,7 @@ fi
 if [[ -n $args_image_name ]]; then
     image_name=$args_image_name
 else
-    tcprint "yellow n]Image name: "
+    printcolor -f yellow -on "Image name: "
     read image_name
 fi
 
@@ -139,7 +139,7 @@ curl_args=(
 [[ $VERBOSITY -ge 2 ]] || curl_args+=(-sS)
 
 # Generate image API call
-[[ $VERBOSITY -lt 1 ]] || tcprint "ok]Generating image..."
+[[ $VERBOSITY -lt 1 ]] || printcolor -s ok "Generating image..."
 curl "${curl_args[@]}" $API_ENDPOINT
 revised_prompt=$(jq -r '.data[].revised_prompt' "$RESPONSE_DATA_FILE")
 url=$(jq -r '.data[].url' "$RESPONSE_DATA_FILE")
@@ -150,12 +150,12 @@ filename="$OUTPUT_DIR/${image_name}_${timestamp}.png"
 if [[ $VERBOSITY -ge 2 ]]; then
     bat $RESPONSE_HEADERS_FILE
     bat -l json $RESPONSE_DATA_FILE
-    tcprint "notice]Revised prompt:"
+    printcolor -s notice "Revised prompt:"
     echo "$revised_prompt"
 fi
 
 # Download image
-[[ $VERBOSITY -lt 1 ]] || tcprint "ok]Downloading image..."
+[[ $VERBOSITY -lt 1 ]] || printcolor -s ok "Downloading image..."
 curl_args=(-L -o "$filename")
 [[ $VERBOSITY -ge 2 ]] || curl_args+=(-sS)
 curl "${curl_args[@]}" "$url"
